@@ -61,6 +61,13 @@ const validators = {
       }
     }
 
+    // Recurrence validation
+    if (data.recurrence !== undefined && data.recurrence !== null) {
+      if (!config.todo.recurrencePatterns.includes(data.recurrence)) {
+        errors.push(`Recurrence must be one of: ${config.todo.recurrencePatterns.join(', ')}`);
+      }
+    }
+
     return {
       isValid: errors.length === 0,
       errors
