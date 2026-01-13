@@ -75,7 +75,27 @@ const validators = {
 
   sanitizeString(str) {
     if (typeof str !== 'string') return str;
-    return str.trim().replace(/<[^>]*>/g, '');
+
+    return str
+      .trim()
+      // Remove HTML tags
+      .replace(/<[^>]*>/g, '')
+      // Encode HTML entities
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      // Remove null bytes
+      .replace(/\0/g, '')
+      // Normalize whitespace
+      .replace(/\s+/g, ' ');
+  },
+
+  // Sanitize array of strings
+  sanitizeStringArray(arr) {
+    if (!Array.isArray(arr)) return arr;
+    return arr.map(item => this.sanitizeString(item)).filter(Boolean);
   },
 
   validatePaginationParams(query) {
