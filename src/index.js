@@ -4,6 +4,7 @@ const path = require('path');
 const config = require('./config');
 const todoRoutes = require('./routes/todos');
 const errorHandler = require('./middleware/errorHandler');
+const { rateLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
@@ -11,6 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Apply rate limiting to API routes
+app.use('/api', rateLimiter());
 
 // Routes
 app.use('/api/todos', todoRoutes);
