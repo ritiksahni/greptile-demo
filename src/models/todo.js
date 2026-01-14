@@ -51,8 +51,7 @@ class Todo {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       completedAt: this.completedAt,
-      lastRecurredAt: this.lastRecurredAt,
-      nextDueDate: this.getNextDueDate()
+      lastRecurredAt: this.lastRecurredAt
     };
   }
 
@@ -83,6 +82,8 @@ class Todo {
         case 'yearly':
           nextDate.setFullYear(nextDate.getFullYear() + 1);
           break;
+        default:
+          return null;
       }
     }
 
