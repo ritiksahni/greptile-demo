@@ -1,5 +1,3 @@
-const config = require('../config');
-
 // Security headers middleware
 function securityHeaders(req, res, next) {
   // Prevent clickjacking
@@ -59,12 +57,20 @@ function parseSize(size) {
 }
 
 // SQL injection pattern detector (for logging/alerting)
+// Note: These patterns are more specific to avoid false positives with legitimate
+// user input like names with apostrophes (O'Brien) or hyphens (Jean-Paul)
 function sqlInjectionDetector(req, res, next) {
   const suspiciousPatterns = [
-    /(\%27)|(\')|(\-\-)|(\%23)|(#)/i,
-    /((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i,
-    /\w*((\%27)|(\'))((\%6F)|o|(\%4F))((\%72)|r|(\%52))/i,
-    /((\%27)|(\'))union/i
+    // SQL comment sequences with potential injection
+    /(\%27|')(\s*)(--|\%23|#)/i,
+    // UNION-based injection
+    /(\%27|')\s*union\s+(all\s+)?select/i,
+    // OR-based injection with quotes
+    /(\%27|')\s*or\s+(\%27|'|\d)/i,
+    // Stacked queries
+    /;\s*(drop|delete|update|insert|alter|truncate|exec|execute)\s/i,
+    // Time-based blind injection
+    /(sleep|benchmark|waitfor)\s*\(/i
   ];
 
   const checkValue = (value) => {
@@ -115,7 +121,7 @@ function noSqlInjectionDetector(req, res, next) {
     return false;
   };
 
-  if (checkObject(req.body)) {
+  if (checkObject(req.body) || checkObject(req.query) || checkObject(req.params)) {
     console.warn(`[SECURITY] Potential NoSQL injection attempt from ${req.ip}: ${req.originalUrl}`);
     return res.status(400).json({
       error: 'Invalid Request',

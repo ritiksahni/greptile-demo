@@ -62,7 +62,7 @@ router.post('/', (req, res) => {
     description: validators.sanitizeString(req.body.description || ''),
     priority: req.body.priority,
     dueDate: req.body.dueDate,
-    tags: req.body.tags || []
+    tags: validators.sanitizeStringArray(req.body.tags || [])
   };
 
   const todo = TodoService.create(todoData);
@@ -92,7 +92,7 @@ router.put('/:id', (req, res) => {
   if (req.body.priority !== undefined) updateData.priority = req.body.priority;
   if (req.body.status !== undefined) updateData.status = req.body.status;
   if (req.body.dueDate !== undefined) updateData.dueDate = req.body.dueDate;
-  if (req.body.tags !== undefined) updateData.tags = req.body.tags;
+  if (req.body.tags !== undefined) updateData.tags = validators.sanitizeStringArray(req.body.tags);
 
   const todo = TodoService.update(id, updateData);
 
