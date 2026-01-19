@@ -61,6 +61,19 @@ const validators = {
       }
     }
 
+    // Recurrence validation
+    if (data.recurrence !== undefined && data.recurrence !== null) {
+      if (typeof data.recurrence !== 'string') {
+        errors.push('Recurrence must be a string');
+      } else if (!config.todo.recurrencePatterns.includes(data.recurrence)) {
+        errors.push(`Recurrence must be one of: ${config.todo.recurrencePatterns.join(', ')}`);
+      }
+
+      if (!isUpdate && !data.dueDate) {
+        errors.push('Recurrence requires a due date');
+      }
+    }
+
     return {
       isValid: errors.length === 0,
       errors

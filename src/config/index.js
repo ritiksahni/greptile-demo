@@ -19,7 +19,8 @@ const config = {
     maxTitleLength: 200,
     maxDescriptionLength: 1000,
     priorities: ['low', 'medium', 'high', 'urgent'],
-    statuses: ['pending', 'in_progress', 'completed', 'archived']
+    statuses: ['pending', 'in_progress', 'completed', 'archived'],
+    recurrencePatterns: ['daily', 'weekly', 'biweekly', 'monthly', 'yearly']
   }
 };
 
